@@ -105,7 +105,25 @@ router.post('/shorturl/new', function (req, res) {
 });
 
 router.get('/shorturl/:id', function (req, res) {
+  function respond(body, status = 200) {
+    return res.status(status)
+      .send(body);
+  }
 
+  if (Number.isNaN(req.params.id)) {
+    return respond({
+      error: 'Invalid url requested'
+    }, 400);
+  }
+
+  ShortUrl.findOne({ shortUrl: parseInt(req.params.id) }, function(err, result) {
+    if (err) {
+      return respond({
+
+      }, 500);
+    }
+    return res.redirect(result.originalUrl);
+  });
 });
 
 app.use('/api', cors({
